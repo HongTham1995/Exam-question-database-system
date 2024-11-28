@@ -138,17 +138,22 @@
                 <label for="topic-select" style="font-weight: bold; margin-right: 5px;">Đề tài:</label>
                 <select class="form-control" id="topic-select" name="topic" onchange="submitSearch()" style="width: 150px;">
                     <option value="all">Tất cả</option>
-                    {% set topics = [] %}
-                    {% for question in questions %}
-                        {% if question[7] not in topics %}
-                            {% set _ = topics.append(question[7]) %}
-                        {% endif %}
-                    {% endfor %}
-                    {% for topic in topics %}
-                        <option value="{{ topic }}">{{ topic }}</option>
-                    {% endfor %}
+                    <option value="basic-concepts">Một số khái niệm cơ bản</option>
+                    <option value="dbms">Hệ quản trị cơ sở dữ liệu</option>
+                    <option value="intro-access">Giới thiệu Microsoft Access</option>
+                    <option value="table-structure">Cấu trúc bảng</option>
+                    <option value="basic-table-operations">Các thao tác cơ bản trên bảng</option>
+                    <option value="forms">Biểu mẫu</option>
+                    <option value="table-relations">Liên kết giữa các bảng</option>
+                    <option value="data-queries">Truy vấn dữ liệu</option>
+                    <option value="reports">Báo cáo và kết xuất báo cáo</option>
+                    <option value="relational-database">Cơ sở dữ liệu quan hệ</option>
+                    <option value="relational-db-operations">Các thao tác với cơ sở dữ liệu quan hệ</option>
+                    <option value="data-security">Bảo mật thông tin trong các hệ cơ sở dữ liệu</option>
+                    <option value="db-architectures">Các loại kiến trúc của hệ cơ sở dữ liệu</option>
                 </select>
             </div>
+            
         
             <!-- Input Nguồn -->
             <div class="form-group d-flex align-items-center" style="margin-bottom: 0;">
@@ -291,13 +296,13 @@
         
     function submitSearch() {
     // Lấy giá trị từ các input
-    const topic = document.getElementById('topic-select').value;
+    const topic = document.getElementById('topic-select').options[document.getElementById('topic-select').selectedIndex].text;
     const source = document.getElementById('source-input').value.trim();
     const startDate = document.getElementById('start-date').value;
     const endDate = document.getElementById('end-date').value;
     const query = document.getElementById('search-input').value.trim();
     const dataType = document.getElementById('data-type-select').value; // Lấy giá trị từ combobox loại dữ liệu
-
+   
     
     // Tạo URL động chỉ với các tham số không trống
     let url = '/all_search_questions?';

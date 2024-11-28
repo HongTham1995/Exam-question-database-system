@@ -525,17 +525,16 @@ def insert_data(connection, questions, title, nguon, url, timestamp):
                     continue
 
                 # Lấy ID của câu hỏi, tính toán theo định dạng TT_1, TT_2, ...
-                select_sql_id = "SELECT MAX(ID) FROM Cau_hoi"
+                select_sql_id = "SELECT COUNT(*) FROM Cau_hoi"
                 cursor.execute(select_sql_id)
-                max_id_result = cursor.fetchone()
+                count_result = cursor.fetchone()
 
-                if max_id_result and max_id_result[0]:
-                    # Tính toán ID mới theo định dạng TT_1, TT_2,...
-                    max_id = int(max_id_result[0].split('_')[1]) + 1
+                if count_result and count_result[0] is not None:
+                    new_id = f"TT_{count_result[0] + 1}"
                 else:
-                    max_id = 1  # Nếu chưa có câu hỏi nào, bắt đầu từ 1
+                    new_id = "TT_1"  # Nếu bảng chưa có bản ghi nào
 
-                new_id = f"TT_{max_id}"  # Tạo ID mới theo định dạng TT_1, TT_2, ...
+                
                 print(f"Đã tạo ID mới với ID: {new_id}")
 
                 # Chèn câu hỏi vào bảng Cau_hoi
@@ -924,14 +923,17 @@ def ai_insert_data(questions, title, nguon, timestamp):
                 continue  # Bỏ qua câu hỏi này nếu có trường hợp null
 
             # Tạo mã ID mới theo định dạng TS_1, TS_2, ...
-            select_sql_id = "SELECT MAX(CAST(SUBSTRING(ID, 4, LEN(ID)) AS INT)) FROM Cau_hoi WHERE ID LIKE 'TS_%'"
+            # Lấy số lượng bản ghi hiện có trong bảng Cau_hoi
+            select_sql_id = "SELECT COUNT(*) FROM Cau_hoi"
             cursor.execute(select_sql_id)
-            max_id_result = cursor.fetchone()
+            count_result = cursor.fetchone()
 
-            if max_id_result[0] is not None:
-                new_id = f"TS_{max_id_result[0] + 1}"
+            # Tính toán ID mới dựa trên số lượng hiện tại cộng thêm 1
+            if count_result and count_result[0] is not None:
+                new_id = f"TS_{count_result[0] + 1}"
             else:
-                new_id = "TS_1"  # Nếu chưa có câu hỏi nào
+                new_id = "TS_1"  # Nếu bảng chưa có bản ghi nào
+
 
             # Chèn câu hỏi vào bảng Cau_hoi
             cursor.execute(insert_sql_cau_hoi, (new_id, cau_hoi, dap_an_a, dap_an_b, dap_an_c, dap_an_d, dap_an_dung, maMT))
@@ -1130,16 +1132,17 @@ def tc_add_question():
             connection.commit()
 
         # Tạo ID mới cho bảng Cau_hoi mà không ép kiểu int
-        select_max_id_sql = "SELECT MAX(ID) FROM Cau_hoi"
-        cursor.execute(select_max_id_sql)
-        max_id_result = cursor.fetchone()
+       # Lấy số lượng bản ghi hiện có trong bảng Cau_hoi
+            select_sql_id = "SELECT COUNT(*) FROM Cau_hoi"
+            cursor.execute(select_sql_id)
+            count_result = cursor.fetchone()
 
-        if max_id_result and max_id_result[0]:
-            # Lấy phần số sau dấu "_" và tăng lên
-            max_id = max_id_result[0].split('_')[1]
-            new_id = f"TC_{int(max_id) + 1}"
-        else:
-            new_id = "TC_1"  # Nếu chưa có ID nào, bắt đầu từ 1
+            # Tính toán ID mới dựa trên số lượng hiện tại cộng thêm 1
+            if count_result and count_result[0] is not None:
+                new_id = f"TC_{count_result[0] + 1}"
+            else:
+                new_id = "TC_1"  # Nếu bảng chưa có bản ghi nào
+
 
         print("New ID created:", new_id)
 
